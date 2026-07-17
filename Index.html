@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist de Documentos — Contabilidade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16213E;
+    --ink-soft:#2C3958;
+    --paper:#FBF7EF;
+    --paper-alt:#F3EEE1;
+    --brass:#A97D3D;
+    --brass-light:#C9A46B;
+    --sage:#4E6E54;
+    --sage-light:#E4ECE3;
+    --text:#2B2823;
+    --text-muted:#6B6459;
+    --rule:#DED2B4;
+    --danger:#9C4A3A;
+    --radius:10px;
+    --shadow:0 2px 10px rgba(22,33,62,0.06), 0 1px 2px rgba(22,33,62,0.08);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    background-image:
+      linear-gradient(var(--paper-alt) 1px, transparent 1px);
+    background-size: 100% 32px;
+    color:var(--text);
+    font-family:'Inter', system-ui, sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:0 24px 100px;}
+
+  /* ---------- Header ---------- */
+  header{
+    padding:56px 0 36px;
+    border-bottom:1px solid var(--rule);
+    margin-bottom:40px;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--brass);
+    margin:0 0 14px;
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:clamp(30px, 4.4vw, 46px);
+    line-height:1.08;
+    margin:0 0 14px;
+    color:var(--ink);
+  }
+  header p.lede{
+    max-width:56ch;
+    color:var(--text-muted);
+    font-size:16.5px;
+    margin:0;
+  }
+  [contenteditable]{outline-offset:4px;}
+  [contenteditable]:focus{outline:1.5px dashed var(--brass-light);}
+  .edit-hint{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--text-muted);
+    opacity:.7;
+    margin-top:18px;
+  }
+
+  /* ---------- Section labels ---------- */
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    margin-bottom:22px;
+  }
+  .section-num{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    color:var(--brass);
+    border:1px solid var(--brass-light);
+    border-radius:100px;
+    padding:2px 10px;
+    flex-shrink:0;
+  }
+  .section-head h2{
+    font-family:'Fraunces', serif;
+    font-size:22px;
+    font-weight:600;
+    color:var(--ink);
+    margin:0;
+  }
+  section{margin-bottom:52px;}
+
+  /* ---------- Service cards ---------- */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(250px,1fr));
+    gap:14px;
+  }
+  .card{
+    position:relative;
+    background:#fff;
+    border:1px solid var(--rule);
+    border-radius:var(--radius);
+    padding:18px 18px 16px;
+    cursor:pointer;
+    transition:border-color .15s ease, box-shadow .15s ease, transform .1s ease;
+    user-select:none;
+  }
+  .card:hover{border-color:var(--brass-light); box-shadow:var(--shadow);}
+  .card:focus-visible{outline:2px solid var(--brass); outline-offset:2px;}
+  .card.active{
+    border-color:var(--ink);
+    background:linear-gradient(180deg, #fff, var(--sage-light) 480%);
+    box-shadow:var(--shadow);
+  }
+  .card-top{display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:10px;}
+  .monogram{
+    width:34px;height:34px;border-radius:50%;
+    background:var(--ink);
+    color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif; font-weight:600; font-size:14px;
+    flex-shrink:0;
+  }
+  .card.active .monogram{background:var(--brass);}
+  .checkmark{
+    width:20px;height:20px;border-radius:5px;
+    border:1.5px solid var(--rule);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+    transition:all .15s ease;
+  }
+  .card.active .checkmark{
+    background:var(--sage);
+    border-color:var(--sage);
+  }
+  .checkmark svg{width:12px;height:12px;opacity:0;transition:opacity .1s ease;}
+  .card.active .checkmark svg{opacity:1;}
+  .card h3{
+    font-family:'Fraunces', serif;
+    font-size:16.5px;
+    font-weight:600;
+    margin:0 0 6px;
+    color:var(--ink);
+  }
+  .card p{margin:0; font-size:13.5px; color:var(--text-muted);}
+  .doc-count{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--brass);
+    margin-top:10px;
+    display:block;
+  }
+
+  /* ---------- Checklist ---------- */
+  #checklist-section{display:none;}
+  #checklist-section.visible{display:block;}
+
+  .progress-bar{
+    height:6px;
+    background:var(--paper-alt);
+    border-radius:100px;
+    overflow:hidden;
+    margin-bottom:6px;
+    border:1px solid var(--rule);
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg, var(--brass), var(--sage));
+    transition:width .3s ease;
+  }
+  .progress-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    color:var(--text-muted);
+    margin-bottom:28px;
+    display:flex;
+    justify-content:space-between;
+  }
+
+  .doc-group{margin-bottom:28px;}
+  .doc-group-title{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:var(--ink-soft);
+    margin:0 0 10px;
+    padding-bottom:8px;
+    border-bottom:1px solid var(--rule);
+  }
+  .doc-item{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding:11px 4px;
+    border-bottom:1px dashed var(--rule);
+    cursor:pointer;
+  }
+  .doc-item:last-child{border-bottom:none;}
+  .doc-box{
+    width:19px;height:19px;border-radius:5px;
+    border:1.5px solid var(--rule);
+    background:#fff;
+    flex-shrink:0;
+    margin-top:1px;
+    display:flex;align-items:center;justify-content:center;
+    transition:all .12s ease;
+  }
+  .doc-item.checked .doc-box{background:var(--sage); border-color:var(--sage);}
+  .doc-box svg{width:11px;height:11px;opacity:0;}
+  .doc-item.checked .doc-box svg{opacity:1;}
+  .doc-text{flex:1;}
+  .doc-item.checked .doc-label{color:var(--text-muted); text-decoration:line-through; text-decoration-color:var(--rule);}
+  .doc-label{font-size:14.5px; color:var(--text); display:block;}
+  .doc-note{font-size:12.5px; color:var(--text-muted); margin-top:2px;}
+
+  /* stamp */
+  .stamp-wrap{
+    position:relative;
+    min-height:0;
+  }
+  .stamp{
+    position:absolute;
+    top:-10px; right:0;
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:500;
+    font-size:13px;
+    letter-spacing:.12em;
+    color:var(--sage);
+    border:2px solid var(--sage);
+    border-radius:6px;
+    padding:6px 14px;
+    transform:rotate(-8deg) scale(.85);
+    opacity:0;
+    transition:transform .35s cubic-bezier(.34,1.56,.64,1), opacity .35s ease;
+    pointer-events:none;
+    background:rgba(78,110,84,0.05);
+  }
+  .stamp.show{opacity:1; transform:rotate(-8deg) scale(1);}
+
+  /* ---------- Contact / send ---------- */
+  .send-panel{
+    background:var(--ink);
+    color:#EFEAE0;
+    border-radius:14px;
+    padding:32px;
+  }
+  .send-panel .section-head h2{color:#fff;}
+  .send-panel .section-num{color:var(--brass-light); border-color:var(--brass-light);}
+  .field-row{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;}
+  @media(max-width:560px){.field-row{grid-template-columns:1fr;}}
+  label.field-label{
+    display:block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:#B9C2D4;
+    margin-bottom:6px;
+  }
+  input[type=text], input[type=email]{
+    width:100%;
+    padding:10px 12px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,0.18);
+    background:rgba(255,255,255,0.06);
+    color:#fff;
+    font-family:'Inter', sans-serif;
+    font-size:14.5px;
+  }
+  input::placeholder{color:#8891A6;}
+  input:focus{outline:1.5px solid var(--brass-light); background:rgba(255,255,255,0.09);}
+
+  .btn-row{display:flex; gap:12px; flex-wrap:wrap; margin-top:22px;}
+  button{
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    border-radius:8px;
+    padding:12px 20px;
+    border:none;
+    cursor:pointer;
+    transition:opacity .15s ease, transform .1s ease;
+  }
+  button:active{transform:translateY(1px);}
+  .btn-primary{background:var(--brass); color:#1A1305;}
+  .btn-primary:hover{opacity:.92;}
+  .btn-secondary{background:transparent; color:#EFEAE0; border:1px solid rgba(255,255,255,0.28);}
+  .btn-secondary:hover{background:rgba(255,255,255,0.06);}
+  .btn-primary:disabled{opacity:.4; cursor:not-allowed;}
+  .btn-whatsapp{
+    background:#25D366; color:#0B2E17;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .btn-whatsapp:hover{opacity:.92;}
+
+  .empty-msg{
+    color:var(--text-muted);
+    font-size:14.5px;
+    padding:30px 0;
+    text-align:center;
+    border:1px dashed var(--rule);
+    border-radius:var(--radius);
+  }
+
+  footer{
+    text-align:center;
+    color:var(--text-muted);
+    font-size:12px;
+    font-family:'IBM Plex Mono', monospace;
+    padding-top:30px;
+  }
+  .footer-credits{
+    margin-top:18px;
+    padding-top:18px;
+    border-top:1px solid var(--rule);
+    font-family:'Inter', sans-serif;
+    font-size:12px;
+    color:var(--text-muted);
+  }
+  .footer-credits a{
+    color:var(--brass);
+    text-decoration:none;
+  }
+  .footer-credits a:hover{text-decoration:underline;}
+
+  @media print{
+    body{background:#fff;}
+    .send-panel, .grid, .section-head:first-of-type, header .edit-hint, footer{display:none !important;}
+    #services-section{display:none;}
+    .stamp{opacity:1;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Checklist de Documentos</p>
+    <h1 contenteditable="true" spellcheck="false">Contábil Adailton</h1>
+    <p class="lede" contenteditable="true" spellcheck="false">Selecione abaixo o(s) serviço(s) que você precisa. A lista de documentos necessários é montada automaticamente para você conferir, marcar e enviar.</p>
+    <!-- <p class="edit-hint">✎ os textos em itálico-editável (título e esta linha) podem ser clicados e alterados diretamente aqui antes de enviar o arquivo ao cliente.</p> -->
+  </header>
+
+  <section id="services-section">
+    <div class="section-head">
+      <span class="section-num">01</span>
+      <h2>O que você precisa hoje?</h2>
+    </div>
+    <div class="grid" id="serviceGrid"></div>
+  </section>
+
+  <section id="checklist-section">
+    <div class="section-head">
+      <span class="section-num">02</span>
+      <h2>Seus documentos</h2>
+    </div>
+
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label">
+      <span id="progressText">0 de 0 documentos reunidos</span>
+      <span id="progressPct">0%</span>
+    </div>
+
+    <div class="stamp-wrap">
+      <div class="stamp" id="stamp">✓ COMPLETO</div>
+      <div id="docGroups"></div>
+    </div>
+  </section>
+
+  <section id="empty-section">
+    <div class="empty-msg" id="emptyMsg">Nenhum serviço selecionado ainda — escolha uma ou mais opções acima para ver os documentos necessários.</div>
+  </section>
+
+  <section class="send-panel" id="sendPanel" style="display:none;">
+    <div class="section-head">
+      <span class="section-num">03</span>
+      <h2>Enviar ao escritório</h2>
+    </div>
+    <div class="field-row">
+      <div>
+        <label class="field-label">Seu nome</label>
+        <input type="text" id="clientName" placeholder="Nome completo">
+      </div>
+      <div>
+        <label class="field-label">Seu e-mail ou WhatsApp</label>
+        <input type="text" id="clientContact" placeholder="email@exemplo.com ou (11) 99999-9999">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-whatsapp" id="btnWhatsapp">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M17.5 14.4c-.3-.1-1.7-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-.3-.1-1.2-.4-2.2-1.4-.8-.7-1.4-1.6-1.5-1.9-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.2-.4.1-.2 0-.3 0-.4-.1-.1-.6-1.4-.8-1.9-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.3-.8.8-.8 1.9s.8 2.2.9 2.4c.1.2 1.6 2.5 4 3.5.6.2 1 .4 1.3.5.6.2 1.1.2 1.5.1.5-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.2-.5-.3z"/><path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.6 1.4 5.1L2 22l5-1.3c1.4.8 3.1 1.2 4.9 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18.1c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3C4.4 15 4 13.5 4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8.1-8 8.1z"/></svg>
+        Enviar para o WhatsApp
+      </button>
+      <button class="btn-primary" id="btnEmail">Enviar por e-mail</button>
+      <button class="btn-secondary" id="btnPrint">Imprimir / salvar em PDF</button>
+    </div>
+    <p style="font-size:12px; color:#9AA4B8; margin-top:16px; margin-bottom:0;">
+      O WhatsApp e o e-mail abrem já com a lista de documentos selecionados. Os arquivos devem ser anexados manualmente antes de enviar, ou entregues pelo canal que o escritório indicar (portal do cliente, etc).
+    </p>
+  </section>
+
+  <footer>
+    
+    <div class="footer-credits">
+      <p>Site desenvolvido por <a href="https://teocode.com.br/">TeoCode</a> · &copy; 2026 TeoCode · CNPJ: 41.061.643/0001-22 · (11) 99567-6202</p>
+    </div>
+  </footer>
+</div>
+
+<script>
+/* ======= CONFIGURAÇÃO DO ESCRITÓRIO ======= */
+/* Troque pelo e-mail e WhatsApp reais do escritório antes de publicar este arquivo */
+const OFFICE_EMAIL = "contato@seuescritorio.com.br";
+/* Número com código do país e DDD, só dígitos (ex: 55 11 98888-7777 -> "5511988887777") */
+const OFFICE_WHATSAPP = "5531992857921";
+
+/* ======= DADOS: SERVIÇOS E DOCUMENTOS ======= */
+const SERVICES = [
+  {
+    id: "abertura",
+    mono: "AB",
+    title: "Abertura de empresa",
+    desc: "MEI, ME, EIRELI ou LTDA",
+    docs: [
+      { id:"rg_cpf_socios", label:"RG e CPF de todos os sócios" },
+      { id:"comp_res_socios", label:"Comprovante de residência dos sócios", note:"emitido nos últimos 3 meses" },
+      { id:"comp_endereco_empresa", label:"Comprovante do endereço da empresa", note:"conta de luz, água ou contrato de locação" },
+      { id:"cnae_atividade", label:"Definição da atividade (CNAE) e nome fantasia" },
+      { id:"capital_social", label:"Valor do capital social e divisão entre sócios", note:"quando houver mais de um sócio" },
+      { id:"cert_casamento", label:"Certidão de casamento", note:"se casado(a); anexar pacto antenupcial, se houver" },
+    ]
+  },
+  {
+    id: "alteracao",
+    mono: "AL",
+    title: "Alteração contratual",
+    desc: "Mudança de sócio, endereço, atividade ou capital",
+    docs: [
+      { id:"contrato_social_vigente", label:"Contrato social vigente" },
+      { id:"ultima_alteracao", label:"Última alteração contratual registrada", note:"se já existir alguma" },
+      { id:"rg_cpf_socios", label:"RG e CPF dos sócios envolvidos na alteração" },
+      { id:"descricao_alteracao", label:"Descrição da alteração desejada", note:"por escrito: o que muda e a partir de quando" },
+      { id:"certidao_debitos_socio", label:"Certidão de débitos do sócio que está saindo", note:"em caso de troca de sócio" },
+    ]
+  },
+  {
+    id: "encerramento",
+    mono: "EN",
+    title: "Encerramento de empresa",
+    desc: "Baixa do CNPJ",
+    docs: [
+      { id:"contrato_social_vigente", label:"Contrato social e todas as alterações" },
+      { id:"guias_impostos_pagas", label:"Últimas guias de impostos pagas", note:"DAS, DARF ou equivalentes" },
+      { id:"certidoes_negativas", label:"Certidões negativas de débitos", note:"Federal, Estadual, Municipal e FGTS" },
+      { id:"balanco_encerramento", label:"Livro caixa ou balanço de encerramento" },
+      { id:"rescisao_funcionarios", label:"Termos de rescisão dos funcionários", note:"se houver funcionários registrados" },
+    ]
+  },
+  {
+    id: "irpf",
+    mono: "IR",
+    title: "Imposto de Renda (pessoa física)",
+    desc: "Declaração anual do IRPF",
+    docs: [
+      { id:"rg_cpf_pessoal", label:"RG e CPF" },
+      { id:"informe_rendimentos", label:"Informe de rendimentos", note:"salários, aluguéis, aposentadoria, pró-labore" },
+      { id:"comp_saude_educacao", label:"Comprovantes de despesas médicas e com educação" },
+      { id:"extratos_bancarios", label:"Extratos bancários e de investimentos", note:"posição em 31/12 do ano anterior" },
+      { id:"doc_bens", label:"Documentos de bens adquiridos ou vendidos no ano", note:"imóveis, veículos, etc." },
+      { id:"comp_dependentes", label:"Documentos dos dependentes", note:"se houver, para inclusão na declaração" },
+    ]
+  },
+  {
+    id: "mensal",
+    mono: "CM",
+    title: "Contabilidade mensal",
+    desc: "Empresa em atividade regular",
+    docs: [
+      { id:"notas_fiscais_mes", label:"Notas fiscais de entrada e saída do mês" },
+      { id:"extratos_bancarios_pj", label:"Extratos bancários da empresa" },
+      { id:"guias_pagas_mes", label:"Guias de impostos e obrigações pagas no mês" },
+      { id:"relatorio_faturamento", label:"Relatório de vendas ou faturamento do mês" },
+      { id:"comp_despesas_mes", label:"Comprovantes de despesas do mês" },
+    ]
+  },
+  {
+    id: "pessoal",
+    mono: "DP",
+    title: "Departamento pessoal",
+    desc: "Admissão de funcionário e folha de pagamento",
+    docs: [
+      { id:"ctps_func", label:"Carteira de trabalho (CTPS) do funcionário" },
+      { id:"rg_cpf_comp_func", label:"RG, CPF e comprovante de residência do funcionário" },
+      { id:"exame_admissional", label:"Exame médico admissional" },
+      { id:"titulo_reservista", label:"Título de eleitor e certificado de reservista", note:"quando aplicável" },
+      { id:"dados_bancarios_func", label:"Dados bancários para pagamento do salário" },
+    ]
+  },
+  {
+    id: "regularizacao",
+    mono: "RD",
+    title: "Regularização de débitos",
+    desc: "Parcelamento e negociação de dívidas fiscais",
+    docs: [
+      { id:"certidoes_negativas", label:"Certidões de débitos atuais", note:"Federal, Estadual e Municipal" },
+      { id:"guias_atrasadas", label:"Guias de impostos em atraso" },
+      { id:"extrato_simples", label:"Extrato do Simples Nacional", note:"se a empresa for optante" },
+      { id:"procuracao", label:"Procuração para representação junto aos órgãos" },
+    ]
+  },
+  {
+    id: "consultoria",
+    mono: "CT",
+    title: "Consultoria tributária",
+    desc: "Planejamento e enquadramento fiscal",
+    docs: [
+      { id:"balanco_dre", label:"Balanço patrimonial e DRE recentes" },
+      { id:"faturamento_12m", label:"Relatório de faturamento dos últimos 12 meses" },
+      { id:"enquadramento_atual", label:"Enquadramento tributário atual da empresa" },
+      { id:"objetivo_consultoria", label:"Descrição do objetivo da consultoria", note:"o que você espera resolver ou otimizar" },
+    ]
+  },
+];
+
+/* ======= ESTADO ======= */
+const state = { selectedServices:new Set(), checkedDocs:new Set() };
+
+/* ======= RENDER: CARDS DE SERVIÇO ======= */
+const grid = document.getElementById("serviceGrid");
+SERVICES.forEach(svc=>{
+  const card = document.createElement("div");
+  card.className = "card";
+  card.tabIndex = 0;
+  card.setAttribute("role","checkbox");
+  card.setAttribute("aria-checked","false");
+  card.innerHTML = `
+    <div class="card-top">
+      <div class="monogram">${svc.mono}</div>
+      <div class="checkmark"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <h3>${svc.title}</h3>
+    <p>${svc.desc}</p>
+    <span class="doc-count">${svc.docs.length} documento${svc.docs.length>1?"s":""}</span>
+  `;
+  function toggle(){
+    if(state.selectedServices.has(svc.id)){
+      state.selectedServices.delete(svc.id);
+      card.classList.remove("active");
+      card.setAttribute("aria-checked","false");
+    } else {
+      state.selectedServices.add(svc.id);
+      card.classList.add("active");
+      card.setAttribute("aria-checked","true");
+    }
+    renderChecklist();
+  }
+  card.addEventListener("click", toggle);
+  card.addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toggle(); } });
+  grid.appendChild(card);
+});
+
+/* ======= RENDER: CHECKLIST DINÂMICO ======= */
+const checklistSection = document.getElementById("checklist-section");
+const emptySection = document.getElementById("empty-section");
+const sendPanel = document.getElementById("sendPanel");
+const docGroups = document.getElementById("docGroups");
+const progressFill = document.getElementById("progressFill");
+const progressText = document.getElementById("progressText");
+const progressPct = document.getElementById("progressPct");
+const stamp = document.getElementById("stamp");
+
+function renderChecklist(){
+  const active = SERVICES.filter(s=>state.selectedServices.has(s.id));
+
+  if(active.length===0){
+    checklistSection.classList.remove("visible");
+    emptySection.style.display = "block";
+    sendPanel.style.display = "none";
+    return;
+  }
+  emptySection.style.display = "none";
+  sendPanel.style.display = "block";
+  checklistSection.classList.add("visible");
+
+  // dedupe: um doc já mostrado num grupo não repete visualmente, mas mantemos por grupo para contexto
+  const seen = new Set();
+  docGroups.innerHTML = "";
+  let total = 0, checked = 0;
+
+  active.forEach(svc=>{
+    const groupDocs = svc.docs.filter(d=>{
+      if(seen.has(d.id)) return false;
+      seen.add(d.id);
+      return true;
+    });
+    if(groupDocs.length===0) return;
+
+    const group = document.createElement("div");
+    group.className = "doc-group";
+    const groupTitle = document.createElement("p");
+    groupTitle.className = "doc-group-title";
+    groupTitle.textContent = svc.title;
+    group.appendChild(groupTitle);
+
+    groupDocs.forEach(d=>{
+      total++;
+      const isChecked = state.checkedDocs.has(d.id);
+      if(isChecked) checked++;
+      const item = document.createElement("div");
+      item.className = "doc-item" + (isChecked ? " checked" : "");
+      item.setAttribute("role","checkbox");
+      item.setAttribute("aria-checked", String(isChecked));
+      item.tabIndex = 0;
+      item.innerHTML = `
+        <div class="doc-box"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="doc-text">
+          <span class="doc-label">${d.label}</span>
+          ${d.note ? `<span class="doc-note">${d.note}</span>` : ""}
+        </div>
+      `;
+      function toggleDoc(){
+        if(state.checkedDocs.has(d.id)) state.checkedDocs.delete(d.id);
+        else state.checkedDocs.add(d.id);
+        renderChecklist();
+      }
+      item.addEventListener("click", toggleDoc);
+      item.addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toggleDoc(); } });
+      group.appendChild(item);
+    });
+    docGroups.appendChild(group);
+  });
+
+  const pct = total ? Math.round((checked/total)*100) : 0;
+  progressFill.style.width = pct + "%";
+  progressText.textContent = `${checked} de ${total} documentos reunidos`;
+  progressPct.textContent = pct + "%";
+  stamp.classList.toggle("show", total>0 && checked===total);
+}
+
+/* ======= ENVIO ======= */
+function buildMessage(){
+  const name = document.getElementById("clientName").value.trim() || "(nome não informado)";
+  const contact = document.getElementById("clientContact").value.trim() || "(contato não informado)";
+  const active = SERVICES.filter(s=>state.selectedServices.has(s.id));
+  if(active.length===0) return null;
+
+  const seen = new Set();
+  let body = `Cliente: ${name}\nContato: ${contact}\n\nServiço(s) solicitado(s):\n`;
+  active.forEach(s=> body += `- ${s.title}\n`);
+  body += `\nDocumentos necessários:\n`;
+  active.forEach(svc=>{
+    svc.docs.forEach(d=>{
+      if(seen.has(d.id)) return;
+      seen.add(d.id);
+      const mark = state.checkedDocs.has(d.id) ? "[reunido]" : "[pendente]";
+      body += `${mark} ${d.label}\n`;
+    });
+  });
+  return { name, body };
+}
+
+document.getElementById("btnEmail").addEventListener("click", ()=>{
+  const msg = buildMessage();
+  if(!msg){ alert("Selecione ao menos um serviço antes de enviar."); return; }
+  const subject = encodeURIComponent(`Documentos — ${msg.name}`);
+  const mailBody = encodeURIComponent(msg.body);
+  window.location.href = `mailto:${OFFICE_EMAIL}?subject=${subject}&body=${mailBody}`;
+});
+
+document.getElementById("btnWhatsapp").addEventListener("click", ()=>{
+  const msg = buildMessage();
+  if(!msg){ alert("Selecione ao menos um serviço antes de enviar."); return; }
+  const text = encodeURIComponent(msg.body);
+  window.open(`https://wa.me/${OFFICE_WHATSAPP}?text=${text}`, "_blank");
+});
+
+document.getElementById("btnPrint").addEventListener("click", ()=> window.print());
+
+renderChecklist();
+</script>
+</body>
+</html>
