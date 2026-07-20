@@ -3,7 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Checklist de Documentos — Contabilidade</title>
+<title>Checklist de Documentos — Contábil Adailton</title>
+<meta name="description" content="Selecione o serviço contábil que você precisa e veja na hora a lista de documentos necessários. Envie tudo direto para o WhatsApp ou e-mail do escritório.">
+<meta name="theme-color" content="#16213E">
+
+<!-- Open Graph (prévia ao compartilhar o link) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Checklist de Documentos — Contábil Adailton">
+<meta property="og:description" content="Selecione o serviço contábil que você precisa e veja na hora quais documentos enviar.">
+<meta property="og:locale" content="pt_BR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Checklist de Documentos — Contábil Adailton">
+<meta name="twitter:description" content="Selecione o serviço contábil que você precisa e veja na hora quais documentos enviar.">
+
+<!-- Favicon (selo simples em SVG, sem precisar de arquivo externo) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%2316213E'/%3E%3Cpath d='M28 52 L44 68 L74 34' stroke='%23A97D3D' stroke-width='10' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -26,6 +43,23 @@
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
+  .skip-link{
+    position:absolute;
+    left:-9999px;
+    top:0;
+    background:var(--ink);
+    color:#fff;
+    padding:12px 20px;
+    border-radius:0 0 8px 0;
+    font-family:'Inter', sans-serif;
+    font-size:14px;
+    font-weight:600;
+    z-index:100;
+    text-decoration:none;
+  }
+  .skip-link:focus{
+    left:0;
+  }
   body{
     background:var(--paper);
     background-image:
@@ -283,6 +317,34 @@
   }
   input::placeholder{color:#8891A6;}
   input:focus{outline:1.5px solid var(--brass-light); background:rgba(255,255,255,0.09);}
+  .required-mark{color:#E8A66B;}
+  .optional-mark{color:#8891A6; text-transform:none; letter-spacing:0; font-weight:400;}
+  .field-row-full{margin-bottom:14px;}
+  textarea{
+    width:100%;
+    padding:10px 12px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,0.18);
+    background:rgba(255,255,255,0.06);
+    color:#fff;
+    font-family:'Inter', sans-serif;
+    font-size:14.5px;
+    resize:vertical;
+    min-height:64px;
+  }
+  textarea::placeholder{color:#8891A6;}
+  textarea:focus{outline:1.5px solid var(--brass-light); background:rgba(255,255,255,0.09);}
+  .field-invalid{
+    border-color:#D67B6B;
+    background:rgba(214,123,107,0.1);
+  }
+  .field-error{
+    display:none;
+    color:#E8A66B;
+    font-size:12px;
+    margin-top:6px;
+  }
+  .field-error.show{display:block;}
 
   .btn-row{display:flex; gap:12px; flex-wrap:wrap; margin-top:22px;}
   button{
@@ -306,6 +368,17 @@
     display:inline-flex; align-items:center; gap:8px;
   }
   .btn-whatsapp:hover{opacity:.92;}
+  .link-button{
+    background:none;
+    border:none;
+    color:#9AA4B8;
+    font-size:12px;
+    text-decoration:underline;
+    cursor:pointer;
+    padding:0;
+    font-family:'Inter', sans-serif;
+  }
+  .link-button:hover{color:#EFEAE0;}
 
   .empty-msg{
     color:var(--text-muted);
@@ -346,6 +419,7 @@
 </style>
 </head>
 <body>
+<a class="skip-link" href="#main-content">Pular para o conteúdo principal</a>
 <div class="wrap">
 
   <header>
@@ -354,6 +428,8 @@
     <p class="lede" contenteditable="true" spellcheck="false">Selecione abaixo o(s) serviço(s) que você precisa. A lista de documentos necessários é montada automaticamente para você conferir, marcar e enviar.</p>
     <!-- <p class="edit-hint">✎ os textos em itálico-editável (título e esta linha) podem ser clicados e alterados diretamente aqui antes de enviar o arquivo ao cliente.</p> -->
   </header>
+
+  <main id="main-content">
 
   <section id="services-section">
     <div class="section-head">
@@ -369,8 +445,8 @@
       <h2>Seus documentos</h2>
     </div>
 
-    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-    <div class="progress-label">
+    <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressBarWrap"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" aria-live="polite">
       <span id="progressText">0 de 0 documentos reunidos</span>
       <span id="progressPct">0%</span>
     </div>
@@ -392,26 +468,37 @@
     </div>
     <div class="field-row">
       <div>
-        <label class="field-label">Seu nome</label>
-        <input type="text" id="clientName" placeholder="Nome completo">
+        <label class="field-label" for="clientName">Seu nome <span class="required-mark">*</span></label>
+        <input type="text" id="clientName" placeholder="Nome completo" required aria-required="true">
+        <span class="field-error" id="errorName" role="alert">Preencha seu nome para continuar.</span>
       </div>
       <div>
-        <label class="field-label">Seu e-mail ou WhatsApp</label>
-        <input type="text" id="clientContact" placeholder="email@exemplo.com ou (11) 99999-9999">
+        <label class="field-label" for="clientContact">Seu e-mail ou WhatsApp <span class="required-mark">*</span></label>
+        <input type="text" id="clientContact" placeholder="email@exemplo.com ou (11) 99999-9999" required aria-required="true">
+        <span class="field-error" id="errorContact" role="alert">Informe um e-mail ou WhatsApp para continuar.</span>
       </div>
     </div>
+    <div class="field-row-full">
+      <label class="field-label" for="clientNotes">Observações <span class="optional-mark">(opcional)</span></label>
+      <textarea id="clientNotes" rows="3" placeholder="Alguma informação extra que o escritório precise saber?"></textarea>
+    </div>
     <div class="btn-row">
-      <button class="btn-whatsapp" id="btnWhatsapp">
-        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M17.5 14.4c-.3-.1-1.7-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-.3-.1-1.2-.4-2.2-1.4-.8-.7-1.4-1.6-1.5-1.9-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.2-.4.1-.2 0-.3 0-.4-.1-.1-.6-1.4-.8-1.9-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.3-.8.8-.8 1.9s.8 2.2.9 2.4c.1.2 1.6 2.5 4 3.5.6.2 1 .4 1.3.5.6.2 1.1.2 1.5.1.5-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.2-.5-.3z"/><path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.6 1.4 5.1L2 22l5-1.3c1.4.8 3.1 1.2 4.9 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18.1c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3C4.4 15 4 13.5 4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8.1-8 8.1z"/></svg>
+      <button class="btn-whatsapp" id="btnWhatsapp" aria-label="Enviar checklist para o WhatsApp do escritório">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" aria-hidden="true" focusable="false"><path d="M17.5 14.4c-.3-.1-1.7-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-.3-.1-1.2-.4-2.2-1.4-.8-.7-1.4-1.6-1.5-1.9-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.2-.4.1-.2 0-.3 0-.4-.1-.1-.6-1.4-.8-1.9-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.3-.8.8-.8 1.9s.8 2.2.9 2.4c.1.2 1.6 2.5 4 3.5.6.2 1 .4 1.3.5.6.2 1.1.2 1.5.1.5-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.2-.5-.3z"/><path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.6 1.4 5.1L2 22l5-1.3c1.4.8 3.1 1.2 4.9 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18.1c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3C4.4 15 4 13.5 4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8.1-8 8.1z"/></svg>
         Enviar para o WhatsApp
       </button>
-      <button class="btn-primary" id="btnEmail">Enviar por e-mail</button>
-      <button class="btn-secondary" id="btnPrint">Imprimir / salvar em PDF</button>
+      <button class="btn-primary" id="btnEmail" aria-label="Enviar checklist por e-mail para o escritório">Enviar por e-mail</button>
+      <button class="btn-secondary" id="btnPrint" aria-label="Imprimir ou salvar checklist em PDF">Imprimir / salvar em PDF</button>
     </div>
-    <p style="font-size:12px; color:#9AA4B8; margin-top:16px; margin-bottom:0;">
+    <p class="privacy-note" style="font-size:12px; color:#9AA4B8; margin-top:16px; margin-bottom:0;">
       O WhatsApp e o e-mail abrem já com a lista de documentos selecionados. Os arquivos devem ser anexados manualmente antes de enviar, ou entregues pelo canal que o escritório indicar (portal do cliente, etc).
     </p>
+    <p style="font-size:12px; margin-top:10px; margin-bottom:0;">
+      <button type="button" id="btnClearData" class="link-button">Limpar dados</button>
+    </p>
   </section>
+
+  </main>
 
   <footer>
     
@@ -427,6 +514,42 @@
 const OFFICE_EMAIL = "contato@seuescritorio.com.br";
 /* Número com código do país e DDD, só dígitos (ex: 55 11 98888-7777 -> "5511988887777") */
 const OFFICE_WHATSAPP = "5531992857921";
+
+/* Analytics opcional — deixe em branco para manter desativado.
+   Preencha um dos dois para ativar (não precisa dos dois):
+   - ANALYTICS_GA4_ID: seu ID do Google Analytics 4, formato "G-XXXXXXX"
+   - ANALYTICS_PLAUSIBLE_DOMAIN: o domínio cadastrado no Plausible, ex: "checklist.seudominio.com.br" */
+const ANALYTICS_GA4_ID = "";
+const ANALYTICS_PLAUSIBLE_DOMAIN = "";
+
+(function initAnalytics(){
+  try{
+    if(ANALYTICS_GA4_ID){
+      const s = document.createElement("script");
+      s.async = true;
+      s.src = `https://www.googletagmanager.com/gtag/js?id=${ANALYTICS_GA4_ID}`;
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function(){ window.dataLayer.push(arguments); };
+      window.gtag('js', new Date());
+      window.gtag('config', ANALYTICS_GA4_ID);
+    }
+    if(ANALYTICS_PLAUSIBLE_DOMAIN){
+      const s = document.createElement("script");
+      s.defer = true;
+      s.setAttribute("data-domain", ANALYTICS_PLAUSIBLE_DOMAIN);
+      s.src = "https://plausible.io/js/script.js";
+      document.head.appendChild(s);
+    }
+  }catch(e){ /* analytics é opcional — falha aqui nunca deve travar o site */ }
+})();
+
+function trackEvent(name, params){
+  try{
+    if(window.gtag) window.gtag('event', name, params || {});
+    if(window.plausible) window.plausible(name, { props: params || {} });
+  }catch(e){ /* ignora falhas de analytics */ }
+}
 
 /* ======= DADOS: SERVIÇOS E DOCUMENTOS ======= */
 const SERVICES = [
@@ -536,8 +659,42 @@ const SERVICES = [
   },
 ];
 
+/* ======= PERSISTÊNCIA LOCAL ======= */
+/* Guarda o progresso do cliente no próprio navegador dele (não é enviado a lugar nenhum),
+   para que ele não perca a seleção se fechar a aba sem terminar. */
+const STORAGE_KEY = "checklist_contabil_dados_v1";
+
+function loadSavedState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+
+function saveState(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      selectedServices: Array.from(state.selectedServices),
+      checkedDocs: Array.from(state.checkedDocs),
+      name: document.getElementById("clientName")?.value || "",
+      contact: document.getElementById("clientContact")?.value || "",
+      notes: document.getElementById("clientNotes")?.value || "",
+    }));
+  }catch(e){ /* localStorage pode estar indisponível (modo privado, etc.) — ignora */ }
+}
+
+function clearSavedState(){
+  try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+  location.reload();
+}
+
+const savedState = loadSavedState();
+
 /* ======= ESTADO ======= */
-const state = { selectedServices:new Set(), checkedDocs:new Set() };
+const state = {
+  selectedServices: new Set(savedState?.selectedServices || []),
+  checkedDocs: new Set(savedState?.checkedDocs || []),
+};
 
 /* ======= RENDER: CARDS DE SERVIÇO ======= */
 const grid = document.getElementById("serviceGrid");
@@ -546,17 +703,21 @@ SERVICES.forEach(svc=>{
   card.className = "card";
   card.tabIndex = 0;
   card.setAttribute("role","checkbox");
-  card.setAttribute("aria-checked","false");
+  card.setAttribute("aria-label", `${svc.title} — ${svc.desc}`);
+  const startsSelected = state.selectedServices.has(svc.id);
+  card.setAttribute("aria-checked", String(startsSelected));
+  if(startsSelected) card.classList.add("active");
   card.innerHTML = `
     <div class="card-top">
       <div class="monogram">${svc.mono}</div>
-      <div class="checkmark"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="checkmark"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false"><path d="M3 8l3.5 3.5L13 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
     <h3>${svc.title}</h3>
     <p>${svc.desc}</p>
     <span class="doc-count">${svc.docs.length} documento${svc.docs.length>1?"s":""}</span>
   `;
   function toggle(){
+    let justSelected = false;
     if(state.selectedServices.has(svc.id)){
       state.selectedServices.delete(svc.id);
       card.classList.remove("active");
@@ -565,13 +726,28 @@ SERVICES.forEach(svc=>{
       state.selectedServices.add(svc.id);
       card.classList.add("active");
       card.setAttribute("aria-checked","true");
+      justSelected = true;
+      trackEvent("service_selected", { service: svc.id });
     }
     renderChecklist();
+    saveState();
+    if(justSelected){
+      requestAnimationFrame(()=>{
+        checklistSection.scrollIntoView({ behavior:"smooth", block:"start" });
+      });
+    }
   }
   card.addEventListener("click", toggle);
   card.addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toggle(); } });
   grid.appendChild(card);
 });
+
+/* Restaura nome, contato e observações salvos anteriormente neste navegador */
+if(savedState){
+  if(savedState.name) document.getElementById("clientName").value = savedState.name;
+  if(savedState.contact) document.getElementById("clientContact").value = savedState.contact;
+  if(savedState.notes) document.getElementById("clientNotes").value = savedState.notes;
+}
 
 /* ======= RENDER: CHECKLIST DINÂMICO ======= */
 const checklistSection = document.getElementById("checklist-section");
@@ -581,6 +757,7 @@ const docGroups = document.getElementById("docGroups");
 const progressFill = document.getElementById("progressFill");
 const progressText = document.getElementById("progressText");
 const progressPct = document.getElementById("progressPct");
+const progressBarWrap = document.getElementById("progressBarWrap");
 const stamp = document.getElementById("stamp");
 
 function renderChecklist(){
@@ -624,9 +801,10 @@ function renderChecklist(){
       item.className = "doc-item" + (isChecked ? " checked" : "");
       item.setAttribute("role","checkbox");
       item.setAttribute("aria-checked", String(isChecked));
+      item.setAttribute("aria-label", d.label + (d.note ? ` — ${d.note}` : ""));
       item.tabIndex = 0;
       item.innerHTML = `
-        <div class="doc-box"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="doc-box"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false"><path d="M3 8l3.5 3.5L13 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <div class="doc-text">
           <span class="doc-label">${d.label}</span>
           ${d.note ? `<span class="doc-note">${d.note}</span>` : ""}
@@ -636,6 +814,7 @@ function renderChecklist(){
         if(state.checkedDocs.has(d.id)) state.checkedDocs.delete(d.id);
         else state.checkedDocs.add(d.id);
         renderChecklist();
+        saveState();
       }
       item.addEventListener("click", toggleDoc);
       item.addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toggleDoc(); } });
@@ -646,20 +825,92 @@ function renderChecklist(){
 
   const pct = total ? Math.round((checked/total)*100) : 0;
   progressFill.style.width = pct + "%";
+  progressBarWrap.setAttribute("aria-valuenow", String(pct));
   progressText.textContent = `${checked} de ${total} documentos reunidos`;
   progressPct.textContent = pct + "%";
   stamp.classList.toggle("show", total>0 && checked===total);
 }
 
+/* ======= MÁSCARA E VALIDAÇÃO DE CONTATO ======= */
+function maskPhone(digits){
+  digits = digits.slice(0,11);
+  if(digits.length <= 2) return digits.replace(/^(\d*)/, "($1");
+  if(digits.length <= 6) return digits.replace(/^(\d{2})(\d*)/, "($1) $2");
+  if(digits.length <= 10) return digits.replace(/^(\d{2})(\d{4})(\d*)/, "($1) $2-$3");
+  return digits.replace(/^(\d{2})(\d{5})(\d*)/, "($1) $2-$3");
+}
+
+function isValidEmail(v){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+}
+function isValidPhoneDigits(v){
+  const digits = v.replace(/\D/g,"");
+  return digits.length===10 || digits.length===11;
+}
+
+const contactField = document.getElementById("clientContact");
+contactField.addEventListener("input", function(e){
+  const raw = this.value;
+  // se parece e-mail (tem letras ou @), não mascara — deixa digitar livre
+  if(/[a-zA-Z@]/.test(raw)){
+    if(raw.trim()){
+      this.classList.remove("field-invalid");
+      document.getElementById("errorContact").classList.remove("show");
+    }
+    saveState();
+    return;
+  }
+  // caso contrário, trata como telefone e aplica máscara progressiva
+  const digits = raw.replace(/\D/g,"");
+  const cursorWasAtEnd = this.selectionStart === raw.length;
+  this.value = digits ? maskPhone(digits) : "";
+  if(cursorWasAtEnd) this.setSelectionRange(this.value.length, this.value.length);
+  if(this.value.trim()){
+    this.classList.remove("field-invalid");
+    document.getElementById("errorContact").classList.remove("show");
+  }
+  saveState();
+});
+
 /* ======= ENVIO ======= */
 function buildMessage(){
-  const name = document.getElementById("clientName").value.trim() || "(nome não informado)";
-  const contact = document.getElementById("clientContact").value.trim() || "(contato não informado)";
+  const nameInput = document.getElementById("clientName");
+  const contactInput = document.getElementById("clientContact");
+  const notesInput = document.getElementById("clientNotes");
+  const name = nameInput.value.trim();
+  const contact = contactInput.value.trim();
+  const notes = notesInput.value.trim();
+
   const active = SERVICES.filter(s=>state.selectedServices.has(s.id));
-  if(active.length===0) return null;
+  if(active.length===0){ alert("Selecione ao menos um serviço antes de enviar."); return null; }
+
+  // valida campos obrigatórios
+  let firstInvalid = null;
+  const nameOk = name.length >= 2;
+  nameInput.classList.toggle("field-invalid", !nameOk);
+  document.getElementById("errorName").classList.toggle("show", !nameOk);
+  document.getElementById("errorName").textContent = "Preencha seu nome para continuar.";
+  if(!nameOk) firstInvalid = nameInput;
+
+  const contactOk = contact && (isValidEmail(contact) || isValidPhoneDigits(contact));
+  contactInput.classList.toggle("field-invalid", !contactOk);
+  const errorContact = document.getElementById("errorContact");
+  errorContact.classList.toggle("show", !contactOk);
+  errorContact.textContent = contact
+    ? "Informe um e-mail válido ou um telefone com DDD (ex: (11) 99999-9999)."
+    : "Informe um e-mail ou WhatsApp para continuar.";
+  if(!contactOk && !firstInvalid) firstInvalid = contactInput;
+
+  if(firstInvalid){
+    firstInvalid.focus();
+    firstInvalid.scrollIntoView({ behavior:"smooth", block:"center" });
+    return null;
+  }
 
   const seen = new Set();
-  let body = `Cliente: ${name}\nContato: ${contact}\n\nServiço(s) solicitado(s):\n`;
+  let body = `Cliente: ${name}\nContato: ${contact}\n`;
+  if(notes) body += `Observações: ${notes}\n`;
+  body += `\nServiço(s) solicitado(s):\n`;
   active.forEach(s=> body += `- ${s.title}\n`);
   body += `\nDocumentos necessários:\n`;
   active.forEach(svc=>{
@@ -673,22 +924,43 @@ function buildMessage(){
   return { name, body };
 }
 
+// remove o destaque de erro assim que a pessoa começa a corrigir o campo, e salva o progresso
+document.getElementById("clientName").addEventListener("input", function(){
+  if(this.value.trim().length >= 2){
+    this.classList.remove("field-invalid");
+    document.getElementById("errorName").classList.remove("show");
+  }
+  saveState();
+});
+document.getElementById("clientNotes").addEventListener("input", saveState);
+
 document.getElementById("btnEmail").addEventListener("click", ()=>{
   const msg = buildMessage();
-  if(!msg){ alert("Selecione ao menos um serviço antes de enviar."); return; }
+  if(!msg) return;
   const subject = encodeURIComponent(`Documentos — ${msg.name}`);
   const mailBody = encodeURIComponent(msg.body);
+  trackEvent("checklist_sent_email");
   window.location.href = `mailto:${OFFICE_EMAIL}?subject=${subject}&body=${mailBody}`;
 });
 
 document.getElementById("btnWhatsapp").addEventListener("click", ()=>{
   const msg = buildMessage();
-  if(!msg){ alert("Selecione ao menos um serviço antes de enviar."); return; }
+  if(!msg) return;
   const text = encodeURIComponent(msg.body);
+  trackEvent("checklist_sent_whatsapp");
   window.open(`https://wa.me/${OFFICE_WHATSAPP}?text=${text}`, "_blank");
 });
 
-document.getElementById("btnPrint").addEventListener("click", ()=> window.print());
+document.getElementById("btnPrint").addEventListener("click", ()=>{
+  trackEvent("checklist_printed");
+  window.print();
+});
+
+document.getElementById("btnClearData").addEventListener("click", ()=>{
+  if(confirm("Isso vai apagar os documentos marcados, o nome e o contato salvos neste navegador. Deseja continuar?")){
+    clearSavedState();
+  }
+});
 
 renderChecklist();
 </script>
